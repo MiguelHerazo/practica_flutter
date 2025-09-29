@@ -30,13 +30,18 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       _editingProduct = args;
     }
 
-    _titleController = TextEditingController(text: _editingProduct?.title ?? '');
-    _descriptionController = TextEditingController(text: _editingProduct?.description ?? '');
+    _titleController =
+        TextEditingController(text: _editingProduct?.title ?? '');
+    _descriptionController =
+        TextEditingController(text: _editingProduct?.description ?? '');
     _priceController = TextEditingController(
         text: _editingProduct != null ? _editingProduct!.price.toString() : '');
-    _brandController = TextEditingController(text: _editingProduct?.brand ?? '');
-    _categoryController = TextEditingController(text: _editingProduct?.category ?? '');
-    _thumbnailController = TextEditingController(text: _editingProduct?.thumbnail ?? '');
+    _brandController =
+        TextEditingController(text: _editingProduct?.brand ?? '');
+    _categoryController =
+        TextEditingController(text: _editingProduct?.category ?? '');
+    _thumbnailController =
+        TextEditingController(text: _editingProduct?.thumbnail ?? '');
   }
 
   @override
@@ -60,24 +65,36 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         description: _descriptionController.text,
         price: num.tryParse(_priceController.text) ?? 0,
         brand: _brandController.text.isEmpty ? null : _brandController.text,
-        category: _categoryController.text.isEmpty ? null : _categoryController.text,
-        thumbnail: _thumbnailController.text.isEmpty ? null : _thumbnailController.text,
+        category:
+            _categoryController.text.isEmpty ? null : _categoryController.text,
+        thumbnail:
+            _thumbnailController.text.isEmpty ? null : _thumbnailController.text,
       );
 
-      if (_editingProduct == null) {
-        await provider.addProduct(newProduct);
-        if (context.mounted) {
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Producto creado')),
-          );
+      try {
+        if (_editingProduct == null) {
+          // Crear
+          await provider.addProduct(newProduct);
+          if (context.mounted) {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Producto creado')),
+            );
+          }
+        } else {
+          // Editar
+          await provider.updateProduct(newProduct.id!, newProduct.toJson());
+          if (context.mounted) {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Producto actualizado')),
+            );
+          }
         }
-      } else {
-        await provider.updateProduct(newProduct.id!, newProduct.toJson());
+      } catch (e) {
         if (context.mounted) {
-          Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Producto actualizado')),
+            SnackBar(content: Text('Error: $e')),
           );
         }
       }
@@ -88,7 +105,8 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_editingProduct == null ? 'Nuevo Producto' : 'Editar Producto'),
+        title:
+            Text(_editingProduct == null ? 'Nuevo Producto' : 'Editar Producto'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -117,15 +135,18 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
               ),
               TextFormField(
                 controller: _brandController,
-                decoration: const InputDecoration(labelText: 'Marca (opcional)'),
+                decoration:
+                    const InputDecoration(labelText: 'Marca (opcional)'),
               ),
               TextFormField(
                 controller: _categoryController,
-                decoration: const InputDecoration(labelText: 'Categoría (opcional)'),
+                decoration:
+                    const InputDecoration(labelText: 'Categoría (opcional)'),
               ),
               TextFormField(
                 controller: _thumbnailController,
-                decoration: const InputDecoration(labelText: 'URL Imagen (opcional)'),
+                decoration: const InputDecoration(
+                    labelText: 'URL Imagen (opcional)'),
               ),
               const SizedBox(height: 20),
               ElevatedButton.icon(

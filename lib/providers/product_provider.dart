@@ -63,11 +63,14 @@ class ProductProvider extends ChangeNotifier {
   Future<void> updateProduct(int id, Map<String, dynamic> updates) async {
     try {
       final updated = await _apiService.updateProduct(id, updates);
+
       final index = _products.indexWhere((p) => p.id == id);
       if (index != -1) {
+        // aunque DummyJSON no persista, actualizamos la lista local
         _products[index] = updated;
-        notifyListeners();
       }
+
+      notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
@@ -77,10 +80,15 @@ class ProductProvider extends ChangeNotifier {
   Future<void> deleteProduct(int id) async {
     try {
       await _apiService.deleteProduct(id);
+
+      // siempre borramos localmente
       _products.removeWhere((p) => p.id == id);
       notifyListeners();
     } catch (e) {
-      _errorMessage = e.toString();
+      // si la API falla (ej. 404 en productos creados con POST),
+      // igual borramos de la lista local
+      _products.removeWhere((p) => p.id == id);
+      _errorMessage = 'Advertencia: ${e.toString()}';
       notifyListeners();
     }
   }

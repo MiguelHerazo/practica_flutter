@@ -82,4 +82,4 @@ La app permite:\
 #### Universidad De Medellín
 #### 2025
 
-Proyecto desarrollado como práctica de **Flutter + API REST**.
+Proyecto desarrollado como práctica de **Flutter** para la materia Desarrollo de Aplicaciones Móviles.
